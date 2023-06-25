@@ -3,17 +3,21 @@ let bookmarkArr: HTMLDivElement[] = [];
 let bookmarkStrArr: string[] = [];
 
 const btn: HTMLFormElement = document.getElementById("myForm") as HTMLFormElement;
-let bkmBtns: HTMLButtonElement[] = Array.from(document.getElementsByClassName("bkm-btn")) as HTMLButtonElement[];
 
 function makeBookMark(name: string): HTMLDivElement {
     const div = document.createElement('div');
     const btn = document.createElement('button');
+    const deleteBtn = document.createElement('button')
     btn.textContent = name;
     btn.className = "bkm-btn"
+    deleteBtn.textContent = "Delete";
+    deleteBtn.className = 'dlt-btn';
+    deleteBtn.name = name;
     div.appendChild(btn);
+    div.appendChild(deleteBtn);
     return div;
 }
-
+//when user adds a new bookmark
 function handleClick(event: Event): void {
     event.preventDefault();
     const form: HTMLFormElement = event.target as HTMLFormElement;
@@ -35,6 +39,7 @@ function handleClick(event: Event): void {
        chrome.storage.local.set({[inputValue]: response});
     })
     addBtnListener();
+    addDltListner();
 
 }
 
@@ -56,25 +61,43 @@ document.addEventListener('DOMContentLoaded', () => {
             //1. DOMContentLoaded: ensure that buttons are injected onto html before running logic
             //2. callback: make sure logic inside callback is done executing before running this.
             addBtnListener();
+            addDltListner();
         }
     })
 });
 
-function handleBtnClick(bkmName: string): void {
-   chrome.runtime.sendMessage({message: "Execute", bkmName});
+function handleBtnClick(func: string, bkmName: string): void {
+    chrome.runtime.sendMessage({message: func, bkmName}, (response: string) => {
+        const dltBtn: HTMLButtonElement = document.querySelector(`button[name="${response}"]`) as HTMLButtonElement;
+        const divElement: HTMLDivElement = dltBtn.parentElement as HTMLDivElement;
+        if (divElement) {
+            divElement.remove();
+        }
+    });
+}
+
+function addDltListner(): void {
+    const dltButtons = document.querySelectorAll('.dlt-btn');
+    dltButtons.forEach(dltButton => {
+        dltButton.addEventListener('click', event => {
+            const pressedBtn = event.target as HTMLButtonElement;
+            const value: string = pressedBtn.name;
+            handleBtnClick("Delete", value);
+        })
+    })
 }
 
 function addBtnListener(): void {
     const newButtons = document.querySelectorAll('.bkm-btn');
     newButtons.forEach(button => {
-            console.log("hello");
             button.addEventListener('click', event => {
                 const pressedBtn = event.target as HTMLButtonElement;
                 const value: string = pressedBtn.innerHTML;
-                handleBtnClick(value);
+                handleBtnClick("Execute", value);
             })
     }) 
 }
+
 
 
 

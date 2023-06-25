@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
             })
             sendResponse(tabUrls);
         })
-    } else {
+    } else if (message.message === 'Execute') {
         const bkmName = message.bkmName;
         chrome.storage.local.get(bkmName, (items) => {
             //we get an object with key:value -> bkmName:[array of urls]
@@ -27,6 +27,16 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
             openTabs(urls);
             
         })
+    } else {
+        //delete btn
+        const bkmName = message.bkmName;
+        chrome.storage.local.remove(bkmName).catch(err => console.log(err));
+        chrome.storage.local.get("bookmarks").then(data => {
+            const newArr: string[] = data["bookmarks"].filter((value: string) => value !== bkmName);
+            chrome.storage.local.set({bookmarks: newArr})
+
+        }).catch(err => console.log(err));
+        sendResponse(bkmName);
     }
     //allows background script to handle the message async -> makes sure message port is open until response is sent
     return true;
@@ -49,9 +59,3 @@ async function openTabs(urls: string[]): Promise<void> {
     }
 
 }
-
-
-
-
-
-// chrome.tabs.create({url: "https://www.twitter.com/home"});
