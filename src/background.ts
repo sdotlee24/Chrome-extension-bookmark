@@ -1,15 +1,4 @@
 
-// chrome.tabs.onUpdated.addListener((tabid: number, changeInfo: chrome.tabs.TabChangeInfo, TAB: chrome.tabs.Tab) => {
-//     if (changeInfo.status === 'complete') {
-//         chrome.tabs.query({}, (tabs) => {
-//             const tabIds: string[] = tabs.map(element => {
-//                 return element.url as string;
-//             })
-//             console.log(tabIds);
-//         })
-//     }
-
-// });
 
 chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.MessageSender, sendResponse) => {
     if (message.message === 'Create') {
@@ -37,6 +26,7 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
 
         }).catch(err => console.log(err));
         sendResponse(bkmName);
+        console.log(bkmName);
     }
     //allows background script to handle the message async -> makes sure message port is open until response is sent
     return true;
