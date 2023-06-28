@@ -1,14 +1,15 @@
 {
     "manifest_version": 3,
     "name": "Tabs Saver",
-    "description": "allows user to store current set of tabs into a storage, and open them at will. Ex: Entertainment layout, Homework layout, Study layout, etc",
+    "description": "allows user to store current set of tabs into a storage, and open them at will. Ex: Entertainment layout,  etc",
     "version": "0.1.0",
     "icons": {
-        "16": "assets/Drawing-2.png"
+        "16": "assets/1630228.png",
+        "48": "assets/1630228.png"
     },
     "action": {
         "default_popup": "popup.html",
-        "default_icon": "assets/Drawing-2.png"
+        "default_icon": "assets/1630228.png"
     },
     "permissions": ["tabs", "storage"],
     "background": {
